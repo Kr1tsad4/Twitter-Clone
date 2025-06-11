@@ -1,25 +1,10 @@
 <script setup>
-import { ref } from "vue";
 import Button from "../components/Button.vue";
-import RegisterForm from "@/components/auth/RegisterForm.vue";
-const showCreateForm = ref(false);
-
-const toggleCreateForm = () => {
-  return (showCreateForm.value = !showCreateForm.value);
-};
 </script>
 
 <template>
-  <div
-    :class="[
-      'max-w-ful min-h-screen',
-      showCreateForm ? 'bg-[rgba(44,52,60,0.4)]' : 'bg-black',
-    ]"
-  >
-    <div
-      class="flex flex-col justify-center items-center"
-      v-if="!showCreateForm"
-    >
+  <div class="'max-w-ful min-h-screen',">
+    <div class="flex flex-col justify-center items-center">
       <div class="mt-28 mb-6">
         <svg
           aria-label="X logo"
@@ -99,12 +84,9 @@ const toggleCreateForm = () => {
 
       <Button class="mt-4">
         <template #text>
-          <h1
-            class="text-base font-sans font-semibold"
-            @click="toggleCreateForm"
-          >
-            Create account
-          </h1>
+          <router-link :to="{ name: 'SignUpPage' }">
+            <h1 class="text-base font-sans font-semibold">Create account</h1>
+          </router-link>
         </template>
       </Button>
 
@@ -132,12 +114,6 @@ const toggleCreateForm = () => {
           <h1 class="text-base font-semibold text-blue-400">Sign in</h1>
         </template>
       </Button>
-    </div>
-    <div
-      v-if="showCreateForm"
-      class="flex flex-col justify-center items-center"
-    >
-      <RegisterForm @closeCreateForm="toggleCreateForm" />
     </div>
   </div>
 </template>
