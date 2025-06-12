@@ -2,7 +2,7 @@
 
 <template>
   <div
-    class="bg-white w-75 h-10 rounded-4xl flex items-center justify-center hover:bg-gray-200"
+    class="w-75 h-10 rounded-4xl flex items-center justify-center "
   >
     <div class="flex gap-2 text-black cursor-pointer">
       <slot name="logo"></slot>
