@@ -7,14 +7,97 @@ const getAllUser = asyncHandler(async (req, res) => {
   res.status(200).json(users);
 });
 
+const getUserById = asyncHandler(async (req, res) => {
+  const users = await user.findById(req.params.id);
+  if (!users) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  const userObj = users.toObject();
+  delete userObj.__v;
+  res.status(200).json(userObj);
+});
+
 const createUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, dob, password } = req.body;
+  const existingEmail = await user.findOne({ email: email });
+  if (existingEmail) {
+    return res.status(400).json({ message: "This email has been used." });
+  }
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await user.create({ name, email, password: hashPassword });
+  const newUser = await user.create({
+    name,
+    email,
+    dob,
+    password: hashPassword,
+  });
   const userObj = newUser.toObject();
   delete userObj.password;
   delete userObj.__v;
   res.status(201).json(userObj);
 });
 
-module.exports = { getAllUser, createUser };
+const updateUser = asyncHandler(async (req, res) => {
+  const existingUser = await user.findById(req.params.id).select("+password");
+  if (!existingUser) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  const { name, email, dob, password, newPassword } = req.body;
+  const existingEmail = await user.findOne({ email: email });
+
+  const updateData = {};
+  if (name) updateData.name = name;
+  if (email) {
+    if (existingEmail) {
+      return res.status(400).json({ message: "This email has been used." });
+    }
+    updateData.email = email
+  }
+  if (dob) updateData.dob = dob;
+
+  if (password && newPassword) {
+    const isSamePassword = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
+    if (!isSamePassword) {
+      return res
+        .status(400)
+        .json({ message: "Current password is incorrect." });
+    }
+
+    const isNewSameAsOld = await bcrypt.compare(
+      newPassword,
+      existingUser.password
+    );
+    if (isNewSameAsOld) {
+      return res.status(400).json({
+        message: "New password must be different from the current password.",
+      });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    updateData.password = hashedNewPassword;
+  }
+
+  await user.updateOne({ _id: existingUser._id }, updateData);
+  res.status(200).json({ message: "User information updated successfully." });
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const existingUser = user.findById(req.params.id);
+  if (!existingUser) {
+    return res.status(404).json({ message: "User not found." });
+  }
+  await user.deleteOne(existingUser);
+  return res.status(200).json({ message: "User has been deleted." });
+});
+
+module.exports = {
+  getAllUser,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+};
