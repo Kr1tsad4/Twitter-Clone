@@ -1,6 +1,6 @@
 <script setup>
 import Button from "../components/Button.vue";
-import Form from "@/views/Form.vue";
+import Form from "@/components/auth/AuthForm.vue";
 import SignOption from "@/components/auth/SignOption.vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";

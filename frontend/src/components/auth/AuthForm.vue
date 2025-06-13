@@ -3,10 +3,17 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SignUpForm from "@/components/auth/SignUpForm.vue";
 import SignInForm from "@/components/auth/SignInForm.vue";
+import { createUser, userLogin } from "@/libs/fetchUserUtils";
+import { useUser } from "@/stores/user";
+import { storeToRefs } from "pinia";
+const user = useUser();
+const { currentUser } = storeToRefs(user);
+const { setUser } = user;
+const baseUrl = import.meta.env.VITE_APP_URL;
 const props = defineProps({
   type: {
     type: String,
-    require: true,
+    required: true,
   },
 });
 const router = useRouter();
@@ -16,8 +23,29 @@ const passwordPage = () => {
   isInformationFilled.value = !isInformationFilled.value;
 };
 
-const goToHomePage = () => {
-  router.push({ name: "HomePage" });
+const login = async (path, account) => {
+  if (path === "/signup") {
+    const newAccount = await createUser(baseUrl, account);
+    console.log(newAccount);
+    const uAccount = {
+      email: newAccount.email,
+      password: account.password,
+    };
+    console.log(uAccount);
+    const loginUser = await userLogin(baseUrl, uAccount);
+    console.log(loginUser);
+    if (loginUser) {
+      setUser(loginUser.user);
+
+      router.push({ name: "HomePage" });
+    }
+  } else if (path === "/login") {
+    const loginUser = await userLogin(baseUrl, account);
+    if (loginUser) {
+      setUser(loginUser.user);
+      router.push({ name: "HomePage" });
+    }
+  }
 };
 </script>
 <template>
@@ -75,14 +103,14 @@ const goToHomePage = () => {
         <SignUpForm
           :isInformationFilled="isInformationFilled"
           @passwordPage="passwordPage"
-          @signUp="goToHomePage"
+          @signUp="login"
         />
       </div>
       <div v-if="props.type === 'signin'">
         <SignInForm
           :isInformationFilled="isInformationFilled"
           @passwordPage="passwordPage"
-          @signIn="goToHomePage"
+          @signIn="login"
         />
       </div>
     </div>

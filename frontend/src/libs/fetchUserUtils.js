@@ -66,4 +66,26 @@ const deleteUser = async (url, id) => {
   }
 };
 
-export { getUser, getUserById, createUser, updateUser, deleteUser };
+const userLogin = async (url, user) => {
+  try {
+    const res = await fetch(`${url}/login`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        ...user,
+      }),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || "Login failed");
+    }
+    const account = await res.json();
+    return account;
+  } catch (e) {
+    throw new Error("can not login with this user");
+  }
+};
+
+export { getUser, getUserById, createUser, updateUser, deleteUser, userLogin };

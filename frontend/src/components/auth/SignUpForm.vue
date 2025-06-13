@@ -1,10 +1,80 @@
 <script setup>
+import { computed, ref, watch, watchEffect } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
 const emits = defineEmits(["passwordPage", "signUp"]);
 const props = defineProps({
   isInformationFilled: {
     type: Boolean,
     require: true,
   },
+});
+
+const name = ref();
+const email = ref();
+const password = ref("");
+const confirmPassword = ref("");
+const selectedMonth = ref("");
+const selectedDay = ref("");
+const selectedYear = ref("");
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 125 }, (_, i) => currentYear - i);
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
+const getDob = computed(() => {
+  if (!selectedYear.value || !selectedMonth.value || !selectedDay.value)
+    return "";
+  return `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`;
+});
+
+const enableNextBtn = ref(false);
+const enableSignUpBtn = ref(false);
+const checkIsInfoFilled = computed(() => {
+  return !!(
+    name.value &&
+    email.value &&
+    selectedYear.value &&
+    selectedMonth.value &&
+    selectedDay.value
+  );
+});
+const checkPassword = computed(() => {
+  if (!password.value || !confirmPassword.value) return false;
+  return password.value === confirmPassword.value;
+});
+const newAccount = computed(() => ({
+  name: name.value,
+  email: email.value,
+  password: checkPassword.value ? confirmPassword.value : "",
+  dob: getDob.value,
+}));
+
+watchEffect(() => {
+  if (checkIsInfoFilled.value) {
+    enableNextBtn.value = true;
+  } else {
+    enableNextBtn.value = false;
+  }
+  if (checkPassword.value) {
+    enableSignUpBtn.value = true;
+  } else {
+    enableSignUpBtn.value = false;
+  }
 });
 </script>
 <template>
@@ -18,12 +88,14 @@ const props = defineProps({
           type="text"
           class="input-style pl-2 w-[450px]"
           placeholder="Name"
+          v-model="name"
         />
 
         <input
-          type="text"
+          type="email"
           class="input-style pl-2 w-[450px]"
           placeholder="Email"
+          v-model="email"
         />
       </div>
       <div class="mt-9 w-[450px]">
@@ -35,31 +107,72 @@ const props = defineProps({
       </div>
 
       <div class="flex gap-2 w-[450px]">
-        <select
-          name="month"
-          class="input-style w-[220px] text-[rgba(178,185,193,0.4)] pb-7 text-sm"
-        >
-          <option disabled selected value="">Month</option>
-        </select>
-        <select
-          name="day"
-          class="input-style w-[100px] text-[rgba(178,185,193,0.4)] pb-7 text-sm"
-        >
-          <option disabled selected value="">Day</option>
-        </select>
-        <select
-          name="year"
-          class="input-style w-[130px] text-[rgba(178,185,193,0.4)] pb-7 text-sm"
-        >
-          <option disabled selected class="">Year</option>
-        </select>
+        <div>
+          <select
+            name="month"
+            class="input-style w-[220px]"
+            v-model="selectedMonth"
+          >
+            <option disabled selected value="">Month</option>
+            <option
+              v-for="(month, index) in months"
+              :key="index"
+              :value="index + 1"
+              class="bg-black"
+            >
+              {{ month }}
+            </option>
+          </select>
+        </div>
+        <div>
+          <select
+            name="day"
+            class="input-style w-[100px]"
+            v-model="selectedDay"
+          >
+            <option disabled selected value="">Day</option>
+            <option
+              v-for="day in days"
+              :key="day"
+              :value="day"
+              class="bg-black"
+            >
+              {{ day }}
+            </option>
+          </select>
+        </div>
+        <div>
+          <select
+            name="year"
+            class="input-style w-[130px]"
+            v-model="selectedYear"
+          >
+            <option disabled selected value="">Year</option>
+
+            <option
+              v-for="(year, index) in years"
+              :key="index"
+              :value="year"
+              class="bg-black"
+            >
+              {{ year }}
+            </option>
+          </select>
+        </div>
       </div>
-      <div
-        class="bg-[rgba(241,243,245,0.4)] cursor-pointer mt-19 w-[450px] h-13 rounded-4xl flex items-center justify-center text-black font-bold"
+
+      <button
+        :disabled="!enableNextBtn"
         @click="$emit('passwordPage')"
+        :class="[
+          'mt-19 w-[450px] h-13 rounded-4xl flex items-center justify-center text-black font-bold',
+          enableNextBtn
+            ? 'bg-white cursor-pointer'
+            : 'bg-[rgba(241,243,245,0.4)]',
+        ]"
       >
         Next
-      </div>
+      </button>
     </div>
 
     <div class="ml-20" v-if="props.isInformationFilled">
@@ -70,20 +183,28 @@ const props = defineProps({
           type="password"
           class="input-style pl-2 w-[450px]"
           placeholder="Password"
+          v-model="password"
         />
 
         <input
           type="password"
           class="input-style pl-2 w-[450px]"
           placeholder="Confirm password"
+          v-model="confirmPassword"
         />
       </div>
-      <div
-        class="bg-[rgba(241,243,245,0.4)] cursor-pointer mt-72 w-[450px] h-13 rounded-4xl flex items-center justify-center text-black font-bold"
-        @click="$emit('signUp')"
+      <button
+        :disabled="!enableSignUpBtn"
+        :class="[
+          'mt-72 w-[450px] h-13 rounded-4xl flex items-center justify-center text-black font-bold',
+          enableSignUpBtn
+            ? 'bg-white cursor-pointer'
+            : 'bg-[rgba(241,243,245,0.4)]',
+        ]"
+        @click="$emit('signUp', route.path, newAccount)"
       >
         Sign up
-      </div>
+      </button>
     </div>
   </div>
 </template>
