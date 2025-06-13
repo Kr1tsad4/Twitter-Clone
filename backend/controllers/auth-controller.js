@@ -5,7 +5,7 @@ const asyncHandler = require("express-async-handler");
 const loginHandler = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!password) {
+  if (!password || (!email && !name)) {
     return res
       .status(400)
       .json({ message: "Please enter email and password." });
@@ -17,7 +17,7 @@ const loginHandler = asyncHandler(async (req, res) => {
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return res.status(401).json({ message: "Invalid email or password." });
+    return res.status(401).json({ message: "Invalid username or password." });
   }
 
   const userObj = user.toObject();

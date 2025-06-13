@@ -1,31 +1,48 @@
-const user = require("../models/user");
+const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
 
 const getAllUser = asyncHandler(async (req, res) => {
-  const users = await user.find();
+  const users = await User.find().select("-__v");
   res.status(200).json(users);
 });
 
 const getUserById = asyncHandler(async (req, res) => {
-  const users = await user.findById(req.params.id);
-  if (!users) {
-    return res.status(404).json({ message: "User not found." });
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: `User not found with id ${id}.` });
   }
 
-  const userObj = users.toObject();
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).json({ message: `User not found with id ${id}.` });
+  }
+  const userObj = getUser.toObject();
   delete userObj.__v;
   res.status(200).json(userObj);
 });
 
 const createUser = asyncHandler(async (req, res) => {
   const { name, email, dob, password } = req.body;
-  const existingEmail = await user.findOne({ email: email });
+  const existingEmail = await User.findOne({ email: email });
+  if (!name || !email || !dob || !password) {
+    return res
+      .status(400)
+      .json({ message: "Please fill in all required fields." });
+  }
+  const isEmailValid = email.includes("@");
+  if (!isEmailValid) {
+    return res.status(400).json({ message: "Invalid email format." });
+  }
+
   if (existingEmail) {
     return res.status(400).json({ message: "This email has been used." });
   }
+
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await user.create({
+  const newUser = await User.create({
     name,
     email,
     dob,
@@ -38,21 +55,34 @@ const createUser = asyncHandler(async (req, res) => {
 });
 
 const updateUser = asyncHandler(async (req, res) => {
-  const existingUser = await user.findById(req.params.id).select("+password");
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: `User not found with id ${id}.` });
+  }
+
+  const existingUser = await User.findById(req.params.id).select("+password");
+
   if (!existingUser) {
     return res.status(404).json({ message: "User not found." });
   }
 
   const { name, email, dob, password, newPassword } = req.body;
-  const existingEmail = await user.findOne({ email: email });
+  const existingEmail = await User.findOne({ email: email });
 
   const updateData = {};
   if (name) updateData.name = name;
-  if (email) {
+
+  const isEmailValid = email.includes("@");
+  if (!isEmailValid) {
+    return res.status(400).json({ message: "Invalid email format." });
+  }
+
+  if (email && existingUser.email !== email) {
     if (existingEmail) {
       return res.status(400).json({ message: "This email has been used." });
     }
-    updateData.email = email
+    updateData.email = email;
   }
   if (dob) updateData.dob = dob;
 
@@ -81,16 +111,22 @@ const updateUser = asyncHandler(async (req, res) => {
     updateData.password = hashedNewPassword;
   }
 
-  await user.updateOne({ _id: existingUser._id }, updateData);
+  await User.updateOne({ _id: existingUser._id }, updateData);
   res.status(200).json({ message: "User information updated successfully." });
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-  const existingUser = user.findById(req.params.id);
-  if (!existingUser) {
-    return res.status(404).json({ message: "User not found." });
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: `User not found with id ${id}.` });
   }
-  await user.deleteOne(existingUser);
+  const existingUser = User.findById(id);
+
+  if (!existingUser) {
+    return res.status(404).json({ message: `User not found with id ${id}.` });
+  }
+  await User.deleteOne(existingUser);
   return res.status(200).json({ message: "User has been deleted." });
 });
 
