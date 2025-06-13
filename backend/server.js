@@ -9,8 +9,8 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use("/api/v1/twitter-clone-lite",userRouter);
-app.use("/api/v1/twitter-clone-lite", authRouter);
+app.use("/api/v1/twitter-clone-lite/user",userRouter);
+app.use("/api/v1/twitter-clone-lite/login", authRouter);
 
 const port = process.env.PORT;
 

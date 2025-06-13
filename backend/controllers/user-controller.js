@@ -11,7 +11,7 @@ const getAllUser = asyncHandler(async (req, res) => {
 const getUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ message: `User not found with id ${id}.` });
   }
 
@@ -19,7 +19,7 @@ const getUserById = asyncHandler(async (req, res) => {
   if (!user) {
     return res.status(404).json({ message: `User not found with id ${id}.` });
   }
-  const userObj = getUser.toObject();
+  const userObj = user.toObject();
   delete userObj.__v;
   res.status(200).json(userObj);
 });
