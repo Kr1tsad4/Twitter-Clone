@@ -6,6 +6,7 @@ import SignInForm from "@/components/auth/SignInForm.vue";
 import { createUser, userLogin } from "@/libs/fetchUserUtils";
 import { useUser } from "@/stores/user";
 import { storeToRefs } from "pinia";
+
 const user = useUser();
 const { currentUser } = storeToRefs(user);
 const { setUser } = user;

@@ -1,9 +1,9 @@
 <script setup>
-import SignOption from "./SignOption.vue";
+import SignOption from "./SignOptionButton.vue";
 import Button from "../Button.vue";
 import { useRoute } from "vue-router";
 import { computed, onMounted, ref, watchEffect } from "vue";
-
+import InputBox from "./InputBox.vue";
 const route = useRoute();
 const emits = defineEmits(["passwordPage", "signIn"]);
 const props = defineProps({
@@ -55,11 +55,11 @@ watchEffect(() => {
         <p class="font-bold text-[28px]">Sign in to X</p>
         <SignOption />
         <div class="mt-3">
-          <input
+          <InputBox
             type="text"
-            class="input-style pl-2 w-[290px] h-15 border-1 border-[rgba(178,185,193,0.4)] rounded-sm"
-            placeholder="Phone, email, or username"
+            formType="signin"
             v-model="userName"
+            placeholder="Phone, email, or username"
           />
         </div>
         <button
@@ -96,19 +96,15 @@ watchEffect(() => {
       <div>
         <div class="flex flex-col">
           <p class="text-[rgba(178,185,193,0.4)] -mb-5">Username</p>
-          <input
-            class="input-style pl-2 w-[430px] h-15 border-1 border-[rgba(178,185,193,0.4)] text-[rgba(178,185,193,0.4)] rounded-sm"
+          <InputBox
+            type="text"
             v-model="userName"
-            disabled
+            placeholder="Phone, email, or username"
+            :disable="true"
           />
         </div>
 
-        <input
-          type="password"
-          class="input-style pl-2 w-[430px] h-15 border-1 border-[rgba(178,185,193,0.4)] rounded-sm"
-          placeholder="Password"
-          v-model="password"
-        />
+        <InputBox v-model="password" type="password" placeholder="Password" />
         <h1
           class="text-[12px] text-blue-500 p-2 cursor-pointer hover:underline"
         >
@@ -144,18 +140,4 @@ watchEffect(() => {
   </div>
 </template>
 
-<style scoped>
-.input-style {
-  border-width: 2px;
-  border-color: rgba(77, 86, 96, 0.4);
-  height: 3.75rem;
-  margin-top: 1.75rem;
-  border-radius: 0.125rem;
-  outline: none;
-}
-
-.input-style:focus {
-  border-color: #3b82f6;
-  outline: none;
-}
-</style>
+<style scoped></style>

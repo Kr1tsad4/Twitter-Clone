@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
+import InputBox from "./InputBox.vue";
+
 const route = useRoute();
 const emits = defineEmits(["passwordPage", "signUp"]);
 const props = defineProps({
@@ -84,18 +86,17 @@ watchEffect(() => {
         <p class="font-semibold text-[34px]">Create your account</p>
       </div>
       <div>
-        <input
+        <InputBox
           type="text"
-          class="input-style pl-2 w-[450px]"
-          placeholder="Name"
+          formType="signup"
           v-model="name"
+          placeholder="Name"
         />
-
-        <input
+        <InputBox
           type="email"
-          class="input-style pl-2 w-[450px]"
-          placeholder="Email"
+          formType="signup"
           v-model="email"
+          placeholder="Email"
         />
       </div>
       <div class="mt-9 w-[450px]">
@@ -179,18 +180,17 @@ watchEffect(() => {
       <p class="font-semibold text-[34px]">Create your password</p>
 
       <div>
-        <input
+        <InputBox
           type="password"
-          class="input-style pl-2 w-[450px]"
-          placeholder="Password"
+          formType="signup"
           v-model="password"
+          placeholder="Password"
         />
-
-        <input
+        <InputBox
           type="password"
-          class="input-style pl-2 w-[450px]"
-          placeholder="Confirm password"
+          formType="signup"
           v-model="confirmPassword"
+          placeholder="Confirm password"
         />
       </div>
       <button
