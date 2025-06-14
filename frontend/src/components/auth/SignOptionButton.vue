@@ -4,7 +4,7 @@ import Button from "../Button.vue";
 
 <template>
   <div>
-    <Button class="mt-8 bg-white hover:bg-gray-200">
+    <Button class="w-75 h-10 mt-8 bg-white hover:bg-gray-200">
       <template #logo>
         <svg
           aria-label="Google logo"

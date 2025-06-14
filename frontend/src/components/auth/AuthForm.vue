@@ -32,7 +32,6 @@ const login = async (path, account) => {
       email: newAccount.email,
       password: account.password,
     };
-    console.log(uAccount);
     const loginUser = await userLogin(baseUrl, uAccount);
     console.log(loginUser);
     if (loginUser) {

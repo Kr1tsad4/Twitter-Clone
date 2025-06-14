@@ -74,7 +74,7 @@ watchEffect(() => {
         >
           Next
         </button>
-        <Button class="mt-6 border-1 border-gray-500">
+        <Button class="w-75 h-10 mt-6 border-1 border-gray-500">
           <template #text>
             <h1 class="text-base font-semibold text-white">Forgot password?</h1>
           </template>
