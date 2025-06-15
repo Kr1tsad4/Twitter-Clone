@@ -1,6 +1,4 @@
-const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const userService = require("../services/user-service");
 
