@@ -93,6 +93,9 @@ const comment = async (tweetId, userId, content) => {
   if (!tweet) {
     throw createError(404, "Tweet not found.");
   }
+  if (!content) {
+    throw createError(400, "Comment content is required.");
+  }
   tweet.comments.push({ user: existingUser._id, content: content });
   await tweet.save();
   return tweet;
