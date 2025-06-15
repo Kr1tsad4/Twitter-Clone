@@ -42,4 +42,63 @@ const deleteTweet = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: "Tweet deleted successfully." });
 });
 
-module.exports = { getAllTweet, getTweetById, createTweet, editTweet,deleteTweet };
+const likeTweet = asyncHandler(async (req, res) => {
+  const tweetId = req.params.id;
+  const { userId } = req.body;
+  if (!isValidObjectId(userId)) {
+    return res
+      .status(404)
+      .json({ message: `User not found with id ${userId}.` });
+  }
+  if (!isValidObjectId(tweetId)) {
+    return res
+      .status(404)
+      .json({ message: `Tweet not found with id ${tweetId}.` });
+  }
+  const likedTweet = await tweetService.like(tweetId, userId);
+  return res.status(200).json(likedTweet);
+});
+
+const unlikeTweet = asyncHandler(async (req, res) => {
+  const tweetId = req.params.id;
+  const { userId } = req.body;
+  if (!isValidObjectId(userId)) {
+    return res
+      .status(404)
+      .json({ message: `User not found with id ${userId}.` });
+  }
+  if (!isValidObjectId(tweetId)) {
+    return res
+      .status(404)
+      .json({ message: `Tweet not found with id ${tweetId}.` });
+  }
+  const unLikedTweet = await tweetService.unlike(tweetId, userId);
+  return res.status(200).json(unLikedTweet);
+});
+
+const commentTweet = asyncHandler(async (req, res) => {
+  const tweetId = req.params.id;
+  const { userId, content } = req.body;
+  if (!isValidObjectId(userId)) {
+    return res
+      .status(404)
+      .json({ message: `User not found with id ${userId}.` });
+  }
+  if (!isValidObjectId(tweetId)) {
+    return res
+      .status(404)
+      .json({ message: `Tweet not found with id ${tweetId}.` });
+  }
+  const commentedTweet = await tweetService.comment(tweetId, userId, content);
+  return res.status(200).json(commentedTweet);
+});
+module.exports = {
+  getAllTweet,
+  getTweetById,
+  createTweet,
+  editTweet,
+  deleteTweet,
+  likeTweet,
+  unlikeTweet,
+  commentTweet,
+};

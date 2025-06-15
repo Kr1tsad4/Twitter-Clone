@@ -92,11 +92,11 @@ const update = async (id, userData) => {
 };
 
 const deleteUser = async (id) => {
-  const existingUser = User.findById(id);
+  const existingUser = await User.findById(id);
 
   if (!existingUser) {
     throw createError(404, `User not found with id ${id}.`);
   }
-  await User.deleteOne(existingUser);
+  await User.deleteOne(existingUser._id);
 };
 module.exports = { findAll, findById, create, update, deleteUser };
