@@ -8,7 +8,6 @@ import { useUser } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
 const user = useUser();
-const { currentUser } = storeToRefs(user);
 const { setUser } = user;
 const baseUrl = import.meta.env.VITE_APP_URL;
 const props = defineProps({
@@ -24,6 +23,10 @@ const passwordPage = () => {
   isInformationFilled.value = !isInformationFilled.value;
 };
 
+const saveUserSession = (user) => {
+  sessionStorage.setItem("currentUser", JSON.stringify(user));
+};
+
 const login = async (path, account) => {
   if (path === "/signup") {
     const newAccount = await createUser(baseUrl, account);
@@ -33,16 +36,16 @@ const login = async (path, account) => {
       password: account.password,
     };
     const loginUser = await userLogin(baseUrl, uAccount);
-    console.log(loginUser);
     if (loginUser) {
       setUser(loginUser.user);
-
+      saveUserSession(loginUser.user);
       router.push({ name: "HomePage" });
     }
   } else if (path === "/login") {
     const loginUser = await userLogin(baseUrl, account);
     if (loginUser) {
       setUser(loginUser.user);
+      saveUserSession(loginUser.user);
       router.push({ name: "HomePage" });
     }
   }
