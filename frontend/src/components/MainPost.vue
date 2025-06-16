@@ -117,7 +117,7 @@ onMounted(async () => {
               <p>o</p>
             </div>
             <div
-              class="w-18 -mr-3 h-9 rounded-4xl flex items-center justify-center"
+              class="w-18 -mr-3 h-9 rounded-4xl flex items-center justify-center -mb-3"
               :class="[
                 contentToTweet
                   ? 'bg-white cursor-pointer'

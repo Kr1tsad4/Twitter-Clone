@@ -26,5 +26,17 @@ const router = createRouter({
     },
   ],
 });
+const isAuthenticated = () => {
+  const user = sessionStorage.getItem("currentUser");
+  return !!user;
+};
+
+router.beforeEach((to, from, next) => {
+  if (to.path === "/home" && !isAuthenticated()) {
+    next({ name: "SignInPage" });
+  } else {
+    next();
+  }
+});
 
 export default router;
