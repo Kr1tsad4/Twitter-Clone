@@ -22,7 +22,7 @@ const logout = () => {
 
 <template>
   <div>
-    <div class="min-h-screen bg-black fixed">
+    <div class="fixed">
       <div class="pt-4 mb-6">
         <svg
           aria-label="X logo"

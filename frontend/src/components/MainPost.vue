@@ -2,7 +2,7 @@
 import { createTweet, deleteTweet, getTweet } from "@/libs/fetchTweetUtils";
 import { getUserById } from "@/libs/fetchUserUtils";
 import { computed, onMounted, ref } from "vue";
-import Post from "./Post.vue";
+import ListPost from "./ListPost.vue";
 
 const props = defineProps({
   userId: {
@@ -137,7 +137,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <Post
+    <ListPost
       :tweets="tweets"
       :tweetMenuId="tweetMenuId"
       @deleteTweet="deleteUserTweet"

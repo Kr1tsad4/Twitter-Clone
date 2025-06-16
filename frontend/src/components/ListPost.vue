@@ -10,7 +10,7 @@ const emits = defineEmits(["deleteTweet", "openTweetMenu"]);
 </script>
 
 <template>
-  <div>
+  <div class="mb-100">
     <div v-for="(tweet, index) in props.tweets" :key="index">
       <div class="flex gap-5 pl-5 pt-4 pb-5">
         <div class="avatar">
@@ -26,10 +26,20 @@ const emits = defineEmits(["deleteTweet", "openTweetMenu"]);
           <div class="flex justify-between">
             <h1>{{ tweet.authorName }}</h1>
             <div class="-mr-30 text-xl -mt-3 cursor-pointer">
-              <p @click="$emit('openTweetMenu',tweet._id)" class="relative">...</p>
-              <div v-if="props.tweetMenuId === tweet._id" class="absolute right-130">
-                <div class="bg-black shadow-white shadow-md h-100 w-90 p-3">
-                  <p @click="$emit('deleteTweet', tweet._id)" class="text-red-500">ลบ</p>
+              <p @click="$emit('openTweetMenu', tweet._id)" class="relative">
+                ...
+              </p>
+              <div
+                v-if="props.tweetMenuId === tweet._id"
+                class="absolute right-130"
+              >
+                <div class="bg-black shadow-white shadow-md h-100 w-85 p-3">
+                  <p
+                    @click="$emit('deleteTweet', tweet._id)"
+                    class="text-red-500"
+                  >
+                    ลบ
+                  </p>
                 </div>
               </div>
             </div>

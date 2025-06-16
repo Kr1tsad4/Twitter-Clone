@@ -4,7 +4,6 @@ import { computed } from "vue";
 const props = defineProps({
   formType: {
     type: String,
-    required: true,
   },
   type: {
     type: String,
