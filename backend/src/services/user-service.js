@@ -9,7 +9,7 @@ const findAll = async () => {
 const findById = async (id) => {
   const user = await User.findById(id).select("-__v");
   if (!user) {
-    throw createError(404, "User not found.");
+    throw createError(404,  `User not found with id ${id}.`);
   }
   return user;
 };
@@ -17,7 +17,7 @@ const create = async (userData) => {
   const { name, email, dob, password } = userData;
   const existingEmail = await User.findOne({ email: userData.email });
   if (existingEmail) {
-    throw new Error("Email already exists");
+    throw new Error("Email already used.");
   }
   const isEmailValid = email.includes("@");
   if (!isEmailValid) {
@@ -41,7 +41,7 @@ const update = async (id, userData) => {
   const existingUser = await User.findById(id).select("+password");
 
   if (!existingUser) {
-    throw createError(404, "User not found.");
+    throw createError(404,  `User not found with id ${id}.`);
   }
 
   const { name, email, dob, password, newPassword } = userData;
