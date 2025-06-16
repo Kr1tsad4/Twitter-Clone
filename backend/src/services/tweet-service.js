@@ -6,12 +6,21 @@ const findAll = async () => {
   return await Tweet.find().select("-__v");
 };
 
-const findById = async (id) => {
+const findByTweetId = async (id) => {
   const existingTweet = await Tweet.findById(id).select("-__v");
   if (!existingTweet) {
     throw createError(404, "Tweet not found.");
   }
   return existingTweet;
+};
+
+const findTweetByUserId = async (userId) => {
+  const existingUser = await User.findById(userId).select("-__v");
+  if (!existingUser) {
+    throw createError(404, "User not found.");
+  }
+  const userTweet = Tweet.find({ authorId: existingUser._id});
+  return userTweet;
 };
 
 const create = async (tweet) => {
@@ -102,7 +111,8 @@ const comment = async (tweetId, userId, content) => {
 };
 module.exports = {
   findAll,
-  findById,
+  findByTweetId,
+  findTweetByUserId,
   create,
   edit,
   deleteTweet,

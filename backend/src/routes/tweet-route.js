@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllTweet,
   getTweetById,
+  getTweetByUserId,
   createTweet,
   editTweet,
   deleteTweet,
@@ -13,6 +14,7 @@ const {
 
 router.route("/").get(getAllTweet);
 router.route("/:id").get(getTweetById);
+router.route("/user/:id").get(getTweetByUserId);
 router.route("/").post(createTweet);
 router.route("/:id").put(editTweet);
 router.route("/like/:id").put(likeTweet);
